@@ -1,0 +1,21 @@
+# ====================================================================
+# Render Blueprint Specification for FileGuard
+# Docs: https://render.com/docs/blueprint-spec
+# ====================================================================
+
+services:
+  - type: web
+    name: fileguard
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true

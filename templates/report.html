@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Report: {{ report.file_metadata.filename }} | FileGuard{% endblock %}
+
+{% block content %}
+<div class="container main-content-wrapper">
+    <div class="section-header-box">
+        <div class="section-title-wrap">
+            <div class="flex-center-start gap-3 mb-2">
+                <a href="{{ url_for('index') }}#history" class="btn btn-sm btn-outline">&larr; Back to Dashboard</a>
+                <span class="badge-tag">Scan ID: {{ report.scan_id[:8] }}...</span>
+            </div>
+            <h2>Security Analysis <span class="highlight-green">Report</span></h2>
+            <p>Target File: <strong class="text-white font-mono">{{ report.file_metadata.filename }}</strong></p>
+        </div>
+        <div class="report-header-controls">
+            <a href="{{ url_for('api_export_report', scan_id=report.scan_id) }}?format=txt" class="btn btn-sm btn-outline">Download TXT</a>
+            <a href="{{ url_for('api_export_report', scan_id=report.scan_id) }}?format=json" class="btn btn-sm btn-outline">Download JSON</a>
+            <button class="btn btn-sm btn-secondary" onclick="window.print()">Print</button>
+        </div>
+    </div>
+
+    <!-- Threat Score & Verdict Hero -->
+    <div class="glass-card mb-6">
+        <div class="report-verdict-banner verdict-bg-{{ report.analysis.verdict_badge }}">
+            <div class="verdict-left">
+                <span class="verdict-label">STATIC HEURISTIC VERDICT</span>
+                <h1 class="verdict-heading text-{{ report.analysis.verdict_badge }}">{{ report.analysis.verdict }}</h1>
+                <p class="verdict-summary">{{ report.analysis.summary }}</p>
+                <div class="verdict-meta-row">
+                    <span>Scanned: {{ report.created_at[:19]|replace('T', ' ') }} UTC</span>
+                    <span class="sep">•</span>
+                    <span>Findings: {{ report.analysis.findings_count }} rules triggered</span>
+                </div>
+            </div>
+            <div class="verdict-right">
+                <div class="threat-gauge-circle score-border-{{ report.analysis.verdict_badge }}">
+                    <span class="gauge-score">{{ report.analysis.risk_score }}</span>
+                    <span class="gauge-max">/ 100</span>
+                    <span class="gauge-label">THREAT SCORE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Metadata & Hashes Grid -->
+    <div class="dashboard-grid-2col mb-6">
+        <!-- Metadata -->
+        <div class="glass-card">
+            <h3 class="card-title-sub">File Identification</h3>
+            <div class="meta-data-table">
+                <div class="meta-row">
+                    <span class="meta-label">File Name:</span>
+                    <span class="meta-val font-mono font-bold">{{ report.file_metadata.filename }}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">File Size:</span>
+                    <span class="meta-val">{{ report.file_metadata.filesize_formatted }} ({{ report.file_metadata.filesize }} bytes)</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Extension:</span>
+                    <span class="meta-val font-mono">{{ report.file_metadata.extension }}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">True Detected Type:</span>
+                    <span class="meta-val highlight-green">{{ report.file_metadata.detected_type }}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">MIME Type:</span>
+                    <span class="meta-val font-mono text-xs">{{ report.file_metadata.mime_type }}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Executable Status:</span>
+                    <span class="meta-val">{{ 'Yes (Direct / Script)' if report.file_metadata.is_executable else 'No (Passive data/document)' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cryptographic Hashes -->
+        <div class="glass-card">
+            <h3 class="card-title-sub">Cryptographic Hashes</h3>
+            <div class="hash-list">
+                <div class="hash-item-box">
+                    <div class="hash-header">
+                        <span class="hash-algo">SHA-256 (Primary Identifier)</span>
+                        <button class="btn-copy-hash" onclick="navigator.clipboard.writeText('{{ report.hashes.sha256 }}'); alert('Copied SHA-256 to clipboard!');">Copy</button>
+                    </div>
+                    <div class="hash-string font-mono">{{ report.hashes.sha256 }}</div>
+                </div>
+
+                <div class="hash-item-box">
+                    <div class="hash-header">
+                        <span class="hash-algo">SHA-1</span>
+                        <button class="btn-copy-hash" onclick="navigator.clipboard.writeText('{{ report.hashes.sha1 }}'); alert('Copied SHA-1 to clipboard!');">Copy</button>
+                    </div>
+                    <div class="hash-string font-mono">{{ report.hashes.sha1 }}</div>
+                </div>
+
+                <div class="hash-item-box">
+                    <div class="hash-header">
+                        <span class="hash-algo">MD5</span>
+                        <button class="btn-copy-hash" onclick="navigator.clipboard.writeText('{{ report.hashes.md5 }}'); alert('Copied MD5 to clipboard!');">Copy</button>
+                    </div>
+                    <div class="hash-string font-mono">{{ report.hashes.md5 }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shannon Entropy Analysis -->
+    <div class="glass-card mb-6">
+        <div class="card-header-flex">
+            <div>
+                <h3 class="card-title-sub mb-1">Shannon Entropy Randomness Analysis</h3>
+                <p class="text-xs text-muted">Values above 7.2 typically indicate encrypted payloads or binary packing (UPX/crypters).</p>
+            </div>
+            <div class="entropy-val-badge badge-{{ report.entropy.risk|lower }}">
+                Entropy: <strong>{{ report.entropy.score }}</strong> / 8.00 ({{ report.entropy.level }})
+            </div>
+        </div>
+
+        <div class="entropy-bar-track mt-4">
+            <div class="entropy-bar-fill" style="width: {{ (report.entropy.score / 8.0) * 100 }}%;"></div>
+            <div class="entropy-threshold-mark" style="left: 90%;" title="7.2 Suspicious / Packed Threshold"></div>
+        </div>
+        <div class="entropy-legend mt-2">
+            <span>0.0 (Uniform)</span>
+            <span>4.0 (Normal Text)</span>
+            <span>6.0 (Normal Binary)</span>
+            <span class="highlight-red">7.2+ (Suspicious/Encrypted)</span>
+            <span>8.0 (Maximum)</span>
+        </div>
+
+        <p class="text-sm text-secondary mt-3">
+            <strong>Assessment:</strong> {{ report.entropy.description }}
+        </p>
+
+        <!-- Chunk breakdown -->
+        {% if report.entropy.chunks %}
+        <div class="mt-4">
+            <span class="text-xs font-semibold uppercase text-muted">Entropy Distribution Across File Segments (16 Slices):</span>
+            <div class="chunk-chart-grid mt-2">
+                {% for ch in report.entropy.chunks %}
+                <div class="chunk-col" title="Slice {{ ch.chunk }} ({{ ch.start_pct }}%-{{ ch.end_pct }}%): {{ ch.entropy }} entropy">
+                    <div class="chunk-bar {% if ch.entropy >= 7.2 %}bar-critical{% elif ch.entropy >= 6.0 %}bar-warning{% else %}bar-normal{% endif %}" style="height: {{ (ch.entropy / 8.0) * 100 }}%;"></div>
+                    <span class="chunk-lbl">{{ ch.chunk }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Heuristic Findings List -->
+    <div class="glass-card mb-6">
+        <h3 class="card-title-sub mb-3">Heuristic Findings & Threat Indicators ({{ report.analysis.findings_count }})</h3>
+        {% if report.analysis.findings %}
+            <div class="findings-list-wrapper">
+                {% for finding in report.analysis.findings %}
+                <div class="finding-card severity-{{ finding.severity|lower }}">
+                    <div class="finding-header">
+                        <div class="finding-title-group">
+                            <span class="finding-badge badge-{{ finding.severity|lower }}">{{ finding.severity }}</span>
+                            <span class="finding-id font-mono">[{{ finding.rule_id }}]</span>
+                            <span class="finding-name">{{ finding.title }}</span>
+                        </div>
+                        <span class="finding-category">{{ finding.category }}</span>
+                    </div>
+                    <p class="finding-explanation">{{ finding.explanation }}</p>
+                    {% if finding.evidence %}
+                    <div class="finding-evidence-box">
+                        <span class="evidence-tag">Evidence / Match:</span>
+                        <div class="evidence-items">
+                            {% for ev in finding.evidence %}
+                            <code class="evidence-code">{{ ev }}</code>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="clean-findings-box">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#00ff88" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <p>No suspicious flags or anomalous characteristics were detected during static inspection.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Raw Header & Hex Dump Box -->
+    <div class="glass-card mb-6">
+        <h3 class="card-title-sub mb-2">Initial Byte Stream & Hex Dump (First 128 Bytes)</h3>
+        <p class="text-xs text-muted mb-3">Static inspection of the initial file header bytes showing offset, hexadecimal representation, and printable ASCII characters.</p>
+        <div class="hex-dump-container">
+            <pre class="hex-pre"><code>{% for row in report.hex_dump %}<span class="hex-offset">{{ row.offset }}:</span> <span class="hex-bytes">{{ row.hex }}</span>  <span class="hex-ascii">|{{ row.ascii }}|</span>
+{% endfor %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Disclaimer Box -->
+    <div class="disclaimer-alert-box">
+        <strong>Security Disclaimer:</strong> {{ report.disclaimer.notice }} {{ report.disclaimer.limitation }}
+    </div>
+</div>
+{% endblock %}

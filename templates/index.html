@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container main-content-wrapper">
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: DASHBOARD                      -->
+    <!-- ========================================== -->
+    <section id="section-dashboard" class="app-section active">
+        <!-- Dashboard Hero Banner -->
+        <div class="dashboard-hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>Cloud-Ready Threat Telemetry</span>
+                </div>
+                <h1 class="hero-title">Automated <span class="highlight-green">Suspicious File Analysis</span> & Heuristic Triage</h1>
+                <p class="hero-subtitle">
+                    Safely inspect untrusted binaries, documents, and scripts using byte-level heuristics, cryptographic hashing, and Shannon entropy analysis. <strong>Never executes uploaded files.</strong>
+                </p>
+                <div class="hero-actions">
+                    <a href="#scanner" class="btn btn-primary btn-glow">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Launch File Scanner</span>
+                    </a>
+                    <a href="#history" class="btn btn-secondary">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>View Scan History</span>
+                    </a>
+                    <a href="#about" class="btn btn-outline">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span>Architecture & Scope</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="radar-card">
+                    <div class="radar-sweep"></div>
+                    <div class="radar-circle c-1"></div>
+                    <div class="radar-circle c-2"></div>
+                    <div class="radar-circle c-3"></div>
+                    <div class="radar-crosshair-x"></div>
+                    <div class="radar-crosshair-y"></div>
+                    <div class="radar-blip b-1"></div>
+                    <div class="radar-blip b-2"></div>
+                    <div class="radar-center-shield">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#00ff88" stroke-width="2">
+                            <path d="M12 2L3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/>
+                        </svg>
+                    </div>
+                    <div class="radar-status-tag">SECURE ENGINE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card card-glow-green">
+                <div class="kpi-header">
+                    <span class="kpi-label">TOTAL SCANS ANALYZED</span>
+                    <div class="kpi-icon icon-green">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpi-total-scans">{{ stats.total_scans }}</div>
+                <div class="kpi-footer">
+                    <span class="kpi-subtext">Telemetry recorded locally</span>
+                </div>
+            </div>
+
+            <div class="kpi-card card-glow-red">
+                <div class="kpi-header">
+                    <span class="kpi-label">SUSPICIOUS / HIGH RISK</span>
+                    <div class="kpi-icon icon-red">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                </div>
+                <div class="kpi-value highlight-red" id="kpi-threat-scans">{{ stats.suspicious_scans + stats.high_risk_scans }}</div>
+                <div class="kpi-footer">
+                    <span class="badge-sub-red">Flagged by heuristic rules</span>
+                </div>
+            </div>
+
+            <div class="kpi-card card-glow-blue">
+                <div class="kpi-header">
+                    <span class="kpi-label">CLEAN / SAFE VERIFIED</span>
+                    <div class="kpi-icon icon-blue">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                </div>
+                <div class="kpi-value highlight-green" id="kpi-clean-scans">{{ stats.clean_scans }}</div>
+                <div class="kpi-footer">
+                    <span class="badge-sub-green">No anomalous signatures</span>
+                </div>
+            </div>
+
+            <div class="kpi-card card-glow-amber">
+                <div class="kpi-header">
+                    <span class="kpi-label">AVG SHANNON ENTROPY</span>
+                    <div class="kpi-icon icon-amber">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    </div>
+                </div>
+                <div class="kpi-value highlight-amber" id="kpi-avg-entropy">{{ stats.avg_entropy }} <span class="unit">/ 8.0</span></div>
+                <div class="kpi-footer">
+                    <span class="kpi-subtext">Information density metric</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Test Bed & Sample Triggers -->
+        <div class="dashboard-grid-2col">
+            <div class="glass-card">
+                <div class="card-header-flex">
+                    <div class="title-with-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00ff88" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <h3>Quick Heuristic Test Bed</h3>
+                    </div>
+                    <span class="badge-tag">Instant Simulation</span>
+                </div>
+                <p class="card-desc">
+                    Need sample files to evaluate the heuristic engine? Click any preset below to generate and analyze an educational test sample instantly:
+                </p>
+                <div class="sample-btn-grid">
+                    <button class="sample-btn" data-sample="clean_text">
+                        <div class="sample-icon">📄</div>
+                        <div class="sample-info">
+                            <span class="sample-name">Benign Text Report</span>
+                            <span class="sample-type">Clean format • Low entropy</span>
+                        </div>
+                        <span class="badge-status-clean">Clean</span>
+                    </button>
+                    <button class="sample-btn" data-sample="spoofed_pdf">
+                        <div class="sample-icon">🚨</div>
+                        <div class="sample-info">
+                            <span class="sample-name">Disguised PDF (PE Binary)</span>
+                            <span class="sample-type">invoice.pdf with MZ header</span>
+                        </div>
+                        <span class="badge-status-danger">Spoof</span>
+                    </button>
+                    <button class="sample-btn" data-sample="suspicious_script">
+                        <div class="sample-icon">⚡</div>
+                        <div class="sample-info">
+                            <span class="sample-name">Obfuscated PowerShell</span>
+                            <span class="sample-type">-enc flag & shadow copy cmd</span>
+                        </div>
+                        <span class="badge-status-danger">High Risk</span>
+                    </button>
+                    <button class="sample-btn" data-sample="double_extension">
+                        <div class="sample-icon">⚠️</div>
+                        <div class="sample-info">
+                            <span class="sample-name">Double Extension VBS</span>
+                            <span class="sample-type">bonus.xlsx.vbs with LotL call</span>
+                        </div>
+                        <span class="badge-status-warning">Camouflage</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cloud Architecture & Microservice Readiness -->
+            <div class="glass-card">
+                <div class="card-header-flex">
+                    <div class="title-with-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+                        <h3>Cloud Computing Architecture</h3>
+                    </div>
+                    <span class="badge-tag tag-blue">Cloud-Native Spec</span>
+                </div>
+                <p class="card-desc">
+                    FileGuard is architected as a stateless static triage microservice designed for seamless deployment across modern cloud computing environments:
+                </p>
+                <div class="cloud-features-list">
+                    <div class="cloud-feat-item">
+                        <div class="feat-bullet">1</div>
+                        <div>
+                            <strong>Stateless Memory Analysis:</strong> Files are read as streaming buffers, evaluated statically, and never persisted to arbitrary execution paths.
+                        </div>
+                    </div>
+                    <div class="cloud-feat-item">
+                        <div class="feat-bullet">2</div>
+                        <div>
+                            <strong>Decoupled Persistence:</strong> Uses lightweight SQLite locally, easily swapped for AWS Aurora, RDS, or DynamoDB via standard configuration.
+                        </div>
+                    </div>
+                    <div class="cloud-feat-item">
+                        <div class="feat-bullet">3</div>
+                        <div>
+                            <strong>Storage Bucket Integration Ready:</strong> Configurable hooks for AWS S3, Azure Blob Storage, or Google Cloud Storage quarantine pipelines.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Scans Preview -->
+        <div class="glass-card mt-6">
+            <div class="card-header-flex">
+                <div class="title-with-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <h3>Recent File Scans</h3>
+                </div>
+                <a href="#history" class="view-all-link">View Full History &rarr;</a>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="cyber-table" id="dashboard-recent-table">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Detected Type</th>
+                            <th>SHA-256 Hash</th>
+                            <th>Risk Score</th>
+                            <th>Verdict</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-recent-tbody">
+                        {% if stats.recent_scans %}
+                            {% for item in stats.recent_scans %}
+                            <tr>
+                                <td class="font-semibold">{{ item.filename }}</td>
+                                <td><span class="badge-tag">{{ item.detected_type }}</span></td>
+                                <td class="font-mono text-xs">
+                                    <span title="{{ item.sha256 }}">{{ item.sha256[:12] }}...{{ item.sha256[-8:] }}</span>
+                                </td>
+                                <td>
+                                    <div class="score-pill score-{{ 'danger' if item.risk_score >= 50 else ('warning' if item.risk_score > 20 else 'clean') }}">
+                                        {{ item.risk_score }}/100
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge-verdict verdict-{{ item.verdict|lower|replace(' ', '-') }}">{{ item.verdict }}</span>
+                                </td>
+                                <td class="text-xs text-muted">{{ item.created_at[:19]|replace('T', ' ') }}</td>
+                                <td>
+                                    <button class="btn-table-action" onclick="window.viewScanDetail('{{ item.scan_id }}')">Report</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-6 text-muted">No files analyzed yet. Upload a file or launch a test sample above!</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: FILE SCANNER                   -->
+    <!-- ========================================== -->
+    <section id="section-scanner" class="app-section">
+        <div class="section-header-box">
+            <div class="section-title-wrap">
+                <h2>Interactive <span class="highlight-green">File Scanner</span></h2>
+                <p>Upload any file to calculate cryptographic hashes, inspect raw magic signatures, evaluate Shannon entropy, and test heuristic threat indicators.</p>
+            </div>
+            <div class="security-guarantee-badge">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#00ff88" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Zero Execution Guarantee</span>
+            </div>
+        </div>
+
+        <!-- Drag & Drop Scanner Area -->
+        <div class="scanner-dropzone-container">
+            <div class="scanner-dropzone" id="file-dropzone">
+                <input type="file" id="file-input" class="file-input-hidden" />
+                <div class="dropzone-laser-beam"></div>
+                <div class="dropzone-content">
+                    <div class="dropzone-icon">
+                        <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#00ff88"></path>
+                            <polyline points="17 8 12 3 7 8" stroke="#00ff88"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15" stroke="#00ff88"></line>
+                        </svg>
+                    </div>
+                    <h3 class="dropzone-title">Drag & Drop suspicious file here</h3>
+                    <p class="dropzone-subtitle">or <button type="button" class="btn-browse-link" id="btn-browse">browse from computer</button></p>
+                    <div class="dropzone-specs">
+                        <span>Max upload limit: <strong>16 MB</strong></span>
+                        <span class="spec-dot">•</span>
+                        <span>Any file format allowed</span>
+                        <span class="spec-dot">•</span>
+                        <span>Files are never executed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload / Scanning Progress Bar -->
+            <div class="scan-progress-box" id="scan-progress-box" style="display: none;">
+                <div class="progress-header">
+                    <div class="progress-status-text">
+                        <span class="spinner-inline"></span>
+                        <span id="progress-phase-label">Ingesting raw byte stream...</span>
+                    </div>
+                    <span class="progress-percent" id="progress-percent-label">45%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+                <div class="progress-steps-row">
+                    <span class="step-chip active" id="step-upload">1. Upload</span>
+                    <span class="step-chip" id="step-hash">2. SHA-256 Hashing</span>
+                    <span class="step-chip" id="step-entropy">3. Shannon Entropy</span>
+                    <span class="step-chip" id="step-heuristics">4. Heuristic Rules</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Scan Result Card (Rendered immediately after scan) -->
+        <div class="scan-result-container" id="scanner-result-box" style="display: none;">
+            <!-- Rendered dynamically by JavaScript -->
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: SCAN HISTORY                   -->
+    <!-- ========================================== -->
+    <section id="section-history" class="app-section">
+        <div class="section-header-box">
+            <div class="section-title-wrap">
+                <h2>Scan <span class="highlight-green">History</span></h2>
+                <p>Locally stored audit log of previously analyzed files, hashes, entropy values, and heuristic verdicts.</p>
+            </div>
+            <div class="history-actions-bar">
+                <button class="btn btn-sm btn-outline" id="btn-refresh-history">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    <span>Refresh</span>
+                </button>
+                <button class="btn btn-sm btn-danger-outline" id="btn-clear-history">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Clear All</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="glass-card mb-6">
+            <div class="history-filter-row">
+                <div class="search-input-wrap">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="history-search-input" placeholder="Filter by filename, SHA-256 hash, or verdict..." />
+                </div>
+                <div class="filter-pills" id="history-verdict-filters">
+                    <button class="filter-pill active" data-filter="all">All</button>
+                    <button class="filter-pill" data-filter="high risk">High Risk</button>
+                    <button class="filter-pill" data-filter="suspicious">Suspicious</button>
+                    <button class="filter-pill" data-filter="clean">Clean / Safe</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="glass-card">
+            <div class="table-responsive">
+                <table class="cyber-table" id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Size</th>
+                            <th>Detected Type</th>
+                            <th>SHA-256 Hash</th>
+                            <th>Entropy</th>
+                            <th>Risk Score</th>
+                            <th>Verdict</th>
+                            <th>Scan Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody">
+                        <tr>
+                            <td colspan="9" class="text-center py-8 text-muted">
+                                <span class="spinner-inline"></span> Loading historical scans...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4: ANALYSIS REPORTS               -->
+    <!-- ========================================== -->
+    <section id="section-report" class="app-section">
+        <div class="section-header-box">
+            <div class="section-title-wrap">
+                <h2>Analysis <span class="highlight-green">Reports</span></h2>
+                <p>Comprehensive forensic breakdown of hashes, Shannon entropy distribution, triggered heuristic rules, and raw byte header dumps.</p>
+            </div>
+            <div class="report-header-controls" id="report-controls" style="display: none;">
+                <button class="btn btn-sm btn-outline" id="btn-export-txt">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Download TXT</span>
+                </button>
+                <button class="btn btn-sm btn-outline" id="btn-export-json">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span>Download JSON</span>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="window.print()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>Print</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- No Report Selected Placeholder -->
+        <div id="report-empty-placeholder" class="glass-card text-center py-16">
+            <div class="empty-icon-wrap">
+                <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#1e2c47" stroke-width="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">No Analysis Report Selected</h3>
+            <p class="text-muted max-w-md mx-auto mb-6">
+                Inspect a suspicious file in the File Scanner or select any previous scan record from Scan History to review its full forensic breakdown.
+            </p>
+            <div class="flex-center gap-4">
+                <a href="#scanner" class="btn btn-primary">Go to File Scanner</a>
+                <a href="#history" class="btn btn-outline">Browse Scan History</a>
+            </div>
+        </div>
+
+        <!-- Active Report Content Container -->
+        <div id="report-active-content" style="display: none;">
+            <!-- Dynamic Report Content Inserted by JS -->
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5: ABOUT                          -->
+    <!-- ========================================== -->
+    <section id="section-about" class="app-section">
+        <div class="section-header-box">
+            <div class="section-title-wrap">
+                <h2>About <span class="highlight-green">FileGuard</span></h2>
+                <p>Architectural philosophy, static heuristics design, and responsible cybersecurity disclosure.</p>
+            </div>
+            <div class="badge-tag tag-green">Cloud Computing Architecture</div>
+        </div>
+
+        <div class="dashboard-grid-2col mb-6">
+            <div class="glass-card">
+                <h3 class="text-lg font-bold mb-3 flex-center-start gap-2">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00ff88" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Project Purpose & Cloud Role
+                </h3>
+                <p class="text-sm text-secondary mb-4 leading-relaxed">
+                    <strong>FileGuard</strong> is a cloud-native cybersecurity file triage platform. In enterprise cloud architectures (such as ingest pipelines for AWS S3, Google Cloud Storage, or user-facing portals), executing untrusted files is hazardous. 
+                </p>
+                <p class="text-sm text-secondary leading-relaxed">
+                    FileGuard acts as the first-line static evaluation gatekeeper: it parses raw byte streams in memory, verifies file integrity through cryptographic hashes, evaluates byte distribution through Shannon entropy, and flags structural anomalies before files reach deeper systems.
+                </p>
+            </div>
+
+            <div class="glass-card">
+                <h3 class="text-lg font-bold mb-3 flex-center-start gap-2 text-red-400">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    Safety Guarantee & Realistic Limitations
+                </h3>
+                <ul class="about-limits-list text-sm text-secondary">
+                    <li>
+                        <strong>Zero Execution Policy:</strong> Uploaded files are strictly treated as inert byte streams. They are never executed, interpreted, or loaded as active binaries.
+                    </li>
+                    <li>
+                        <strong>Not a Complete Antivirus Replacement:</strong> FileGuard is an educational and static triage tool. It does NOT claim to detect 100% of malware, novel zero-days, or sophisticated runtime memory injections.
+                    </li>
+                    <li>
+                        <strong>No Fake Engine Results:</strong> We do not fabricate vendor verdicts or simulate external proprietary scanning engines. All scores derive transparently from visible rules.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Heuristics Glossary -->
+        <div class="glass-card mb-6">
+            <h3 class="text-lg font-bold mb-4">Core Heuristics Explained</h3>
+            <div class="heuristics-glossary-grid">
+                <div class="glossary-item">
+                    <span class="glossary-title">1. Shannon Entropy Analysis</span>
+                    <p class="glossary-desc">
+                        Measures byte-level randomness on a scale from 0.0 to 8.0. Normal text and structured code score between 3.5 and 5.5. Values exceeding 7.2 strongly indicate encryption (ransomware) or runtime binary packers (such as UPX).
+                    </p>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-title">2. Magic Byte Header Inspection</span>
+                    <p class="glossary-desc">
+                        Attackers frequently rename <code>malware.exe</code> to <code>invoice.pdf</code> or <code>photo.jpg</code>. FileGuard reads the true initial bytes (magic numbers, e.g., <code>MZ</code> for PE executables) to catch disguised extensions.
+                    </p>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-title">3. Double Extension Camouflage</span>
+                    <p class="glossary-desc">
+                        Exploits the Windows default configuration that hides known file extensions. Attackers name files <code>payroll.docx.exe</code> so victims only see <code>payroll.docx</code>.
+                    </p>
+                </div>
+                <div class="glossary-item">
+                    <span class="glossary-title">4. Living-off-the-Land (LotL) Strings</span>
+                    <p class="glossary-desc">
+                        Scans static binary strings for commands abusing native administrative binaries (e.g., <code>powershell -enc</code>, <code>vssadmin delete shadows</code>, <code>certutil -urlcache</code>, and <code>bitsadmin</code>).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Architecture Reference -->
+        <div class="glass-card">
+            <h3 class="text-lg font-bold mb-3">Cloud Deployment Reference</h3>
+            <div class="cloud-steps-grid">
+                <div class="step-card">
+                    <span class="step-num">Step 1</span>
+                    <h4>Local Development</h4>
+                    <p class="text-xs text-muted">Runs on Python Flask with embedded SQLite database. Zero external API keys, services, or paid accounts required.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">Step 2</span>
+                    <h4>Containerization</h4>
+                    <p class="text-xs text-muted">Can be packaged in a lightweight Alpine/Debian Docker container exposing port 5000 via Gunicorn or Waitress.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">Step 3</span>
+                    <h4>Cloud Orchestration</h4>
+                    <p class="text-xs text-muted">Deployable to AWS Elastic Beanstalk, Google Cloud Run, Azure App Service, or Render with zero code changes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

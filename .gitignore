@@ -1,0 +1,59 @@
+# ====================================================================
+# FileGuard Git Ignore Policy
+# Excludes virtual environments, caches, databases, uploads, and secrets
+# ====================================================================
+
+# Python Bytecode and Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environments
+venv/
+venv*/
+env/
+env*/
+ENV/
+.venv/
+
+# Environment Variables, Keys, and Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+
+# Local SQLite Database & Uploaded Files
+data/*.db
+data/*.sqlite3
+data/temp_uploads/*
+!data/.gitkeep
+!data/temp_uploads/.gitkeep
+
+# IDE and Editor Configurations
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS-Generated Artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs & Temporary Scratch Files
+*.log
+scratch/
+test_app.py
