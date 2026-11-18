@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="description" content="نظّم مواد كليتك وملاحظاتك وملفاتك في مكان واحد.">
+  <title>موادّي | منظم مواد الكلية</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="موادّي، الصفحة الرئيسية">
+      <span class="brand-mark" aria-hidden="true">م</span>
+      <span>موادّي <small>منظم مواد الكلية</small></span>
+    </a>
+    <span class="storage-label"><span class="status-dot"></span> محفوظ على جهازك</span>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="تفعيل الوضع الداكن" aria-pressed="false">
+      <span id="theme-icon" aria-hidden="true">☾</span>
+      <span id="theme-label">الوضع الداكن</span>
+    </button>
+  </header>
+
+  <main class="page">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">مساحتك الدراسية</p>
+        <h1>كل موادك، مرتبة بمكان واحد.</h1>
+        <p class="intro-copy">أضف موادك، دوّن ملاحظاتك، واجمع ملفات كل مادة في مساحة خاصة.</p>
+      </div>
+      <div class="summary" aria-label="ملخص المواد">
+        <span class="summary-icon" aria-hidden="true">▤</span>
+        <span><strong id="course-count">٠</strong><small>مواد دراسية</small></span>
+      </div>
+    </section>
+
+    <div class="privacy-note" role="note">
+      <span aria-hidden="true">🔒</span>
+      <p><strong>خصوصيتك محفوظة:</strong> بياناتك وملفاتك تُحفظ محليًا في هذا المتصفح على هذا الجهاز فقط. لن تظهر على جهاز آخر ولا تتم مزامنتها مع حسابك.</p>
+    </div>
+
+    <section class="workspace" aria-label="إدارة المواد">
+      <aside class="course-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">مكتبتك</p>
+            <h2>المواد</h2>
+          </div>
+          <button class="icon-button add-button" id="add-course" type="button" aria-label="إضافة مادة" title="إضافة مادة">+</button>
+        </div>
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <span class="visually-hidden">ابحث عن مادة</span>
+          <input id="course-search" type="search" placeholder="ابحث عن مادة..." autocomplete="off">
+        </label>
+        <div id="course-list" class="course-list" aria-live="polite"></div>
+        <button class="primary-button full-width" id="add-course-secondary" type="button"><span aria-hidden="true">＋</span> أضف مادة جديدة</button>
+      </aside>
+
+      <section id="course-content" class="course-content" aria-live="polite">
+        <div class="empty-state">
+          <span class="empty-icon" aria-hidden="true">📚</span>
+          <h2>ابدأ بتنظيم دراستك</h2>
+          <p>أضف أول مادة لتكتب ملاحظاتك وتحفظ ملفاتها.</p>
+          <button class="primary-button" id="add-course-empty" type="button">إضافة أول مادة</button>
+        </div>
+      </section>
+    </section>
+    <p class="page-footnote">تُخزَّن الملفات في مساحة المتصفح (IndexedDB). مسح بيانات المتصفح قد يؤدي إلى حذفها.</p>
+  </main>
+
+  <dialog id="course-dialog" class="course-dialog">
+    <form id="course-form">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">مكتبتك الدراسية</p>
+          <h2 id="dialog-title">إضافة مادة</h2>
+        </div>
+        <button class="icon-button close-button" id="close-dialog" type="button" aria-label="إغلاق">×</button>
+      </div>
+      <label class="field-label" for="course-name">اسم المادة</label>
+      <input id="course-name" class="text-input" name="courseName" type="text" maxlength="100" placeholder="مثال: مبادئ البرمجة" required>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="cancel-dialog" type="button">إلغاء</button>
+        <button class="primary-button" type="submit" id="save-course">إضافة المادة</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
